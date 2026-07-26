@@ -86,7 +86,10 @@
 
   <script>
     const LIFF_ID = '2010846374-JwiQPWxJ';
-
+    
+const GAS_API_URL =
+  'https://script.google.com/macros/s/AKfycbzFVHSwqMg9mDgcc1bpTSxUhKmrzvIHG4qu54D_ksCGFw511i4SoGSZPd1KcdL7GdNa_g/exec';
+    
     async function initializeLiff() {
       const status =
         document.getElementById('status');
@@ -125,36 +128,61 @@
         const profile =
           await liff.getProfile();
 
-        status.innerHTML = `
-          <p>
-            LIFFの初期化に成功しました。
-          </p>
+status.textContent =
+  '④ 予約サーバーへ接続しています…';
 
-          <div class="user-card">
-            ${
-              profile.pictureUrl
-                ? `
-                  <img
-                    class="user-picture"
-                    src="${escapeHtml(profile.pictureUrl)}"
-                    alt=""
-                  >
-                `
-                : ''
-            }
+const response = await fetch(
+  `${GAS_API_URL}?action=health`
+);
 
-            <div>
-              <div class="label">
-                LINE表示名
-              </div>
+if (!response.ok) {
+  throw new Error(
+    `GAS通信エラー：${response.status}`
+  );
+}
 
-              <strong>
-                ${escapeHtml(profile.displayName)}
-              </strong>
-            </div>
-          </div>
-        `;
+const apiResult = await response.json();
 
+if (!apiResult.success) {
+  throw new Error(
+    apiResult.message ||
+    'GASとの通信に失敗しました'
+  );
+}
+        
+status.innerHTML = `
+  <p>
+    LIFFの初期化に成功しました。
+  </p>
+
+  <p>
+    ${escapeHtml(apiResult.message)}
+  </p>
+
+  <div class="user-card">
+    ${
+      profile.pictureUrl
+        ? `
+          <img
+            class="user-picture"
+            src="${escapeHtml(profile.pictureUrl)}"
+            alt=""
+          >
+        `
+        : ''
+    }
+
+    <div>
+      <div class="label">
+        LINE表示名
+      </div>
+
+      <strong>
+        ${escapeHtml(profile.displayName)}
+      </strong>
+    </div>
+  </div>
+`;
       } catch (error) {
         console.error(error);
 
