@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>LINE予約システム</title>
+
+  <script
+    charset="utf-8"
+    src="https://static.line-scdn.net/liff/edge/2/sdk.js"
+  ></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f7f7f7;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        "Yu Gothic",
+        sans-serif;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    #status {
+      line-height: 1.7;
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+    }
+
+    .user-picture {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .label {
+      margin-bottom: 4px;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .error {
+      color: #c62828;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>LINE予約システム</h1>
+
+    <div id="status">
+      ① LIFFを初期化しています…
+    </div>
+  </main>
+
+  <script>
+    const LIFF_ID = '2010846374-JwiQPWxJ';
+
+    async function initializeLiff() {
+      const status =
+        document.getElementById('status');
+
+      try {
+        status.textContent =
+          '① LIFFを初期化しています…';
+
+        await liff.init({
+          liffId: LIFF_ID
+        });
+
+        status.textContent =
+          '② ログイン状態を確認しています…';
+
+        if (!liff.isLoggedIn()) {
+          status.innerHTML = `
+            <p>
+              LINEへのログインが必要です。
+            </p>
+
+            <button
+              type="button"
+              onclick="liff.login()"
+            >
+              LINEでログイン
+            </button>
+          `;
+
+          return;
+        }
+
+        status.textContent =
+          '③ プロフィールを取得しています…';
+
+        const profile =
+          await liff.getProfile();
+
+        status.innerHTML = `
+          <p>
+            LIFFの初期化に成功しました。
+          </p>
+
+          <div class="user-card">
+            ${
+              profile.pictureUrl
+                ? `
+                  <img
+                    class="user-picture"
+                    src="${escapeHtml(profile.pictureUrl)}"
+                    alt=""
+                  >
+                `
+                : ''
+            }
+
+            <div>
+              <div class="label">
+                LINE表示名
+              </div>
+
+              <strong>
+                ${escapeHtml(profile.displayName)}
+              </strong>
+            </div>
+          </div>
+        `;
+
+      } catch (error) {
+        console.error(error);
+
+        status.innerHTML = `
+          <p class="error">
+            LIFFの初期化に失敗しました。
+          </p>
+
+          <p class="error">
+            ${escapeHtml(
+              error.message || String(error)
+            )}
+          </p>
+        `;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    initializeLiff();
+  </script>
+</body>
+</html>
