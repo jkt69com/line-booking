@@ -69,8 +69,22 @@
       font-size: 13px;
     }
 
+    .success {
+      color: #16833b;
+    }
+
     .error {
       color: #c62828;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 8px;
+      background: #06c755;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -85,11 +99,12 @@
   </main>
 
   <script>
-    const LIFF_ID = '2010846374-JwiQPWxJ';
-    
-const GAS_API_URL =
-  'https://script.google.com/macros/s/AKfycbzFVHSwqMg9mDgcc1bpTSxUhKmrzvIHG4qu54D_ksCGFw511i4SoGSZPd1KcdL7GdNa_g/exec';
-    
+    const LIFF_ID =
+      '2010846374-JwiQPWxJ';
+
+    const GAS_API_URL =
+      'https://script.google.com/macros/s/AKfycbzFVHSwqMg9mDgcc1bpTSxUhKmrzvIHG4qu54D_ksCGFw511i4SoGSZPd1KcdL7GdNa_g/exec';
+
     async function initializeLiff() {
       const status =
         document.getElementById('status');
@@ -113,7 +128,7 @@ const GAS_API_URL =
 
             <button
               type="button"
-              onclick="liff.login()"
+              onclick="loginWithLine()"
             >
               LINEでログイン
             </button>
@@ -123,81 +138,159 @@ const GAS_API_URL =
         }
 
         status.textContent =
-          '③ プロフィールを取得しています…';
+          '③ LINEプロフィールを取得しています…';
 
         const profile =
           await liff.getProfile();
 
-status.textContent =
-  '④ 予約サーバーへ接続しています…';
+        status.textContent =
+          '④ 予約サーバーへ接続しています…';
 
-const response = await fetch(
-  `${GAS_API_URL}?action=health`
-);
+        const healthResponse =
+          await fetch(
+            `${GAS_API_URL}?action=health`
+          );
 
-if (!response.ok) {
-  throw new Error(
-    `GAS通信エラー：${response.status}`
-  );
-}
+        if (!healthResponse.ok) {
+          throw new Error(
+            `GAS通信エラー：${healthResponse.status}`
+          );
+        }
 
-const apiResult = await response.json();
+        const healthResult =
+          await healthResponse.json();
 
-if (!apiResult.success) {
-  throw new Error(
-    apiResult.message ||
-    'GASとの通信に失敗しました'
-  );
-}
-        
-status.innerHTML = `
-  <p>
-    LIFFの初期化に成功しました。
-  </p>
+        if (!healthResult.success) {
+          throw new Error(
+            healthResult.message ||
+            'GASとの通信に失敗しました。'
+          );
+        }
 
-  <p>
-    ${escapeHtml(apiResult.message)}
-  </p>
+        status.textContent =
+          '⑤ IDトークンを取得しています…';
 
-  <div class="user-card">
-    ${
-      profile.pictureUrl
-        ? `
-          <img
-            class="user-picture"
-            src="${escapeHtml(profile.pictureUrl)}"
-            alt=""
-          >
-        `
-        : ''
-    }
+        const idToken =
+          liff.getIDToken();
 
-    <div>
-      <div class="label">
-        LINE表示名
-      </div>
+        if (!idToken) {
+          throw new Error(
+            'LINEのIDトークンを取得できませんでした。'
+          );
+        }
 
-      <strong>
-        ${escapeHtml(profile.displayName)}
-      </strong>
-    </div>
-  </div>
-`;
+        status.textContent =
+          '⑥ LINEユーザーを認証しています…';
+
+        const verifyResponse =
+          await fetch(
+            GAS_API_URL,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type':
+                  'text/plain;charset=utf-8'
+              },
+              body: JSON.stringify({
+                action: 'verifyLineUser',
+                idToken: idToken
+              })
+            }
+          );
+
+        if (!verifyResponse.ok) {
+          throw new Error(
+            `認証サーバー通信エラー：${verifyResponse.status}`
+          );
+        }
+
+        const verifyResult =
+          await verifyResponse.json();
+
+        if (!verifyResult.success) {
+          throw new Error(
+            verifyResult.message ||
+            'LINEユーザー認証に失敗しました。'
+          );
+        }
+
+        const verifiedUser =
+          verifyResult.user;
+
+        status.innerHTML = `
+          <p class="success">
+            LIFFの初期化に成功しました。
+          </p>
+
+          <p class="success">
+            ${escapeHtml(
+              healthResult.message
+            )}
+          </p>
+
+          <p class="success">
+            ${escapeHtml(
+              verifyResult.message
+            )}
+          </p>
+
+          <div class="user-card">
+            ${
+              verifiedUser.pictureUrl
+                ? `
+                  <img
+                    class="user-picture"
+                    src="${escapeHtml(
+                      verifiedUser.pictureUrl
+                    )}"
+                    alt=""
+                  >
+                `
+                : ''
+            }
+
+            <div>
+              <div class="label">
+                LINE表示名
+              </div>
+
+              <strong>
+                ${escapeHtml(
+                  verifiedUser.displayName
+                )}
+              </strong>
+            </div>
+          </div>
+        `;
+
+        console.log(
+          'LIFF profile:',
+          profile
+        );
+
       } catch (error) {
         console.error(error);
 
         status.innerHTML = `
           <p class="error">
-            LIFFの初期化に失敗しました。
+            処理に失敗しました。
           </p>
 
           <p class="error">
             ${escapeHtml(
-              error.message || String(error)
+              error.message ||
+              String(error)
             )}
           </p>
         `;
       }
+    }
+
+    function loginWithLine() {
+      liff.login({
+        redirectUri:
+          window.location.href.split('#')[0]
+      });
     }
 
     function escapeHtml(value) {
