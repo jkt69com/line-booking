@@ -5,7 +5,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1"
+    content="width=device-width, initial-scale=1.0"
   >
 
   <title>LINE予約システム</title>
@@ -15,294 +15,197 @@
     src="https://static.line-scdn.net/liff/edge/2/sdk.js"
   ></script>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 24px;
-      background: #f7f7f7;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Helvetica Neue",
-        "Yu Gothic",
-        sans-serif;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 24px;
-      background: #fff;
-      border-radius: 16px;
-      box-sizing: border-box;
-    }
-
-    h1 {
-      margin-top: 0;
-      font-size: 24px;
-    }
-
-    #status {
-      line-height: 1.7;
-    }
-
-    .user-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 20px;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-    }
-
-    .user-picture {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .label {
-      margin-bottom: 4px;
-      color: #777;
-      font-size: 13px;
-    }
-
-    .success {
-      color: #16833b;
-    }
-
-    .error {
-      color: #c62828;
-    }
-
-    button {
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 8px;
-      background: #06c755;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 </head>
 
 <body>
-  <main class="container">
-    <h1>LINE予約システム</h1>
+  <main class="app">
 
-    <div id="status">
-      ① LIFFを初期化しています…
-    </div>
+    <!-- ホーム画面 -->
+    <section id="homeScreen" class="screen is-active">
+      <h1 class="title">LINE予約システム</h1>
+
+      <p class="description">
+        ご希望のコースと日時を選んでください。
+      </p>
+
+      <div id="lineUserStatus" class="user-status">
+        <p class="loading-message">
+          LINEユーザー情報を確認しています…
+        </p>
+      </div>
+
+      <button
+        id="startBookingButton"
+        type="button"
+        class="button"
+        onclick="showScreen('menuScreen')"
+        disabled
+      >
+        予約する
+      </button>
+    </section>
+
+    <!-- コース選択画面 -->
+    <section id="menuScreen" class="screen">
+      <h1 class="title">コース選択</h1>
+
+      <p class="description">
+        ご希望のコースを選択してください。
+      </p>
+
+      <div class="selection-list">
+        <button
+          type="button"
+          class="selection-item"
+          onclick="selectMenu('60分コース')"
+        >
+          60分コース
+        </button>
+
+        <button
+          type="button"
+          class="selection-item"
+          onclick="selectMenu('90分コース')"
+        >
+          90分コース
+        </button>
+
+        <button
+          type="button"
+          class="selection-item"
+          onclick="selectMenu('120分コース')"
+        >
+          120分コース
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="back-button"
+        onclick="showScreen('homeScreen')"
+      >
+        ← 戻る
+      </button>
+    </section>
+
+    <!-- 日付選択画面 -->
+    <section id="dateScreen" class="screen">
+      <h1 class="title">日付選択</h1>
+
+      <p class="description">
+        選択中：
+        <strong id="selectedMenu"></strong>
+      </p>
+
+      <div id="dateList" class="selection-list"></div>
+
+      <button
+        type="button"
+        class="back-button"
+        onclick="showScreen('menuScreen')"
+      >
+        ← コース選択へ戻る
+      </button>
+    </section>
+
+    <!-- 時間選択画面 -->
+    <section id="timeScreen" class="screen">
+      <h1 class="title">時間選択</h1>
+
+      <p class="description">
+        <span id="selectedDate"></span>
+      </p>
+
+      <div id="timeList" class="selection-list"></div>
+
+      <button
+        type="button"
+        class="back-button"
+        onclick="showScreen('dateScreen')"
+      >
+        ← 日付選択へ戻る
+      </button>
+    </section>
+
+    <!-- 確認画面 -->
+    <section id="confirmScreen" class="screen">
+      <h1 class="title">予約内容の確認</h1>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>コース</span>
+          <strong id="confirmMenu"></strong>
+        </div>
+
+        <div class="summary-row">
+          <span>日付</span>
+          <strong id="confirmDate"></strong>
+        </div>
+
+        <div class="summary-row">
+          <span>時間</span>
+          <strong id="confirmTime"></strong>
+        </div>
+      </div>
+
+      <button
+        id="submitButton"
+        type="button"
+        class="button"
+        onclick="submitBooking()"
+      >
+        この内容で予約する
+      </button>
+
+      <button
+        type="button"
+        class="back-button"
+        onclick="showScreen('timeScreen')"
+      >
+        ← 時間選択へ戻る
+      </button>
+    </section>
+
+    <!-- 予約完了画面 -->
+    <section id="completeScreen" class="screen">
+      <h1 class="title">予約完了</h1>
+
+      <p class="description">
+        ご予約を受け付けました。
+      </p>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>コース</span>
+          <strong id="completeMenu"></strong>
+        </div>
+
+        <div class="summary-row">
+          <span>日付</span>
+          <strong id="completeDate"></strong>
+        </div>
+
+        <div class="summary-row">
+          <span>時間</span>
+          <strong id="completeTime"></strong>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="button"
+        onclick="resetBooking()"
+      >
+        最初の画面へ戻る
+      </button>
+    </section>
+
   </main>
 
-  <script>
-    const LIFF_ID =
-      '2010846374-JwiQPWxJ';
-
-    const GAS_API_URL =
-      'https://script.google.com/macros/s/AKfycbzFVHSwqMg9mDgcc1bpTSxUhKmrzvIHG4qu54D_ksCGFw511i4SoGSZPd1KcdL7GdNa_g/exec';
-
-    async function initializeLiff() {
-      const status =
-        document.getElementById('status');
-
-      try {
-        status.textContent =
-          '① LIFFを初期化しています…';
-
-        await liff.init({
-          liffId: LIFF_ID
-        });
-
-        status.textContent =
-          '② ログイン状態を確認しています…';
-
-        if (!liff.isLoggedIn()) {
-          status.innerHTML = `
-            <p>
-              LINEへのログインが必要です。
-            </p>
-
-            <button
-              type="button"
-              onclick="loginWithLine()"
-            >
-              LINEでログイン
-            </button>
-          `;
-
-          return;
-        }
-
-        status.textContent =
-          '③ LINEプロフィールを取得しています…';
-
-        const profile =
-          await liff.getProfile();
-
-        status.textContent =
-          '④ 予約サーバーへ接続しています…';
-
-        const healthResponse =
-          await fetch(
-            `${GAS_API_URL}?action=health`
-          );
-
-        if (!healthResponse.ok) {
-          throw new Error(
-            `GAS通信エラー：${healthResponse.status}`
-          );
-        }
-
-        const healthResult =
-          await healthResponse.json();
-
-        if (!healthResult.success) {
-          throw new Error(
-            healthResult.message ||
-            'GASとの通信に失敗しました。'
-          );
-        }
-
-        status.textContent =
-          '⑤ IDトークンを取得しています…';
-
-        const idToken =
-          liff.getIDToken();
-
-        if (!idToken) {
-          throw new Error(
-            'LINEのIDトークンを取得できませんでした。'
-          );
-        }
-
-        status.textContent =
-          '⑥ LINEユーザーを認証しています…';
-
-        const verifyResponse =
-          await fetch(
-            GAS_API_URL,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type':
-                  'text/plain;charset=utf-8'
-              },
-              body: JSON.stringify({
-                action: 'verifyLineUser',
-                idToken: idToken
-              })
-            }
-          );
-
-        if (!verifyResponse.ok) {
-          throw new Error(
-            `認証サーバー通信エラー：${verifyResponse.status}`
-          );
-        }
-
-        const verifyResult =
-          await verifyResponse.json();
-
-        if (!verifyResult.success) {
-          throw new Error(
-            verifyResult.message ||
-            'LINEユーザー認証に失敗しました。'
-          );
-        }
-
-        const verifiedUser =
-          verifyResult.user;
-
-        status.innerHTML = `
-          <p class="success">
-            LIFFの初期化に成功しました。
-          </p>
-
-          <p class="success">
-            ${escapeHtml(
-              healthResult.message
-            )}
-          </p>
-
-          <p class="success">
-            ${escapeHtml(
-              verifyResult.message
-            )}
-          </p>
-
-          <div class="user-card">
-            ${
-              verifiedUser.pictureUrl
-                ? `
-                  <img
-                    class="user-picture"
-                    src="${escapeHtml(
-                      verifiedUser.pictureUrl
-                    )}"
-                    alt=""
-                  >
-                `
-                : ''
-            }
-
-            <div>
-              <div class="label">
-                LINE表示名
-              </div>
-
-              <strong>
-                ${escapeHtml(
-                  verifiedUser.displayName
-                )}
-              </strong>
-            </div>
-          </div>
-        `;
-
-        console.log(
-          'LIFF profile:',
-          profile
-        );
-
-      } catch (error) {
-        console.error(error);
-
-        status.innerHTML = `
-          <p class="error">
-            処理に失敗しました。
-          </p>
-
-          <p class="error">
-            ${escapeHtml(
-              error.message ||
-              String(error)
-            )}
-          </p>
-        `;
-      }
-    }
-
-    function loginWithLine() {
-      liff.login({
-        redirectUri:
-          window.location.href.split('#')[0]
-      });
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-    }
-
-    initializeLiff();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
