@@ -352,7 +352,7 @@ async function selectDate(
     }
 
     createTimeButtons(
-      result.availableTimes
+      result.times
     );
 
   } catch (error) {
@@ -564,7 +564,7 @@ async function handleBookingResult(result) {
       }
 
       createTimeButtons(
-        reloadResult.availableTimes
+        reloadResult.times
       );
 
     } catch (error) {
