@@ -1,0 +1,183 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f4f5f7;
+  color: #222;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    "Yu Gothic",
+    "Meiryo",
+    sans-serif;
+}
+
+button {
+  font-family: inherit;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+  background: #fff;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.is-active {
+  display: block;
+}
+
+.title {
+  margin: 20px 0 8px;
+  font-size: 26px;
+  text-align: center;
+}
+
+.description {
+  margin: 0 0 24px;
+  color: #666;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.button {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #06c755;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.button:active,
+.selection-item:active {
+  opacity: 0.75;
+}
+
+.selection-list {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.selection-item {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  color: #222;
+  font-size: 17px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.back-button {
+  display: block;
+  margin: 24px auto 0;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: #555;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.summary {
+  margin: 24px 0;
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.summary-row:last-child {
+  border-bottom: 0;
+}
+
+.summary-row span {
+  color: #666;
+}
+
+.summary-row strong {
+  text-align: right;
+}
+
+.loading-message,
+.empty-message,
+.error-message {
+  margin: 32px 0;
+  padding: 20px;
+  border-radius: 10px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.loading-message {
+  background: #f4f5f7;
+  color: #555;
+}
+
+.empty-message {
+  background: #fff8e5;
+  color: #665200;
+}
+
+.error-message {
+  background: #fff0f0;
+  color: #a40000;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-status {
+  margin: 0 0 24px;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.user-picture {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-label {
+  margin-bottom: 4px;
+  color: #777;
+  font-size: 13px;
+}
