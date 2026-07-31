@@ -131,6 +131,87 @@
       </button>
     </section>
 
+<section
+  id="customerScreen"
+  class="screen"
+>
+  <div class="screen-header">
+    <button
+      type="button"
+      class="back-button"
+      onclick="showScreen('timeScreen')"
+    >
+      戻る
+    </button>
+
+    <h2>お客様情報</h2>
+  </div>
+
+  <div class="selected-summary">
+    <p>
+      コース：
+      <strong id="customerMenu"></strong>
+    </p>
+
+    <p>
+      日付：
+      <strong id="customerDate"></strong>
+    </p>
+
+    <p>
+      時間：
+      <strong id="customerTime"></strong>
+    </p>
+  </div>
+
+  <div class="form-group">
+    <label for="customerName">
+      お名前(偽名可)
+      <span class="required-label">必須</span>
+    </label>
+
+    <input
+      type="text"
+      id="customerName"
+      class="form-input"
+      maxlength="50"
+      autocomplete="name"
+      placeholder="例：ナカガワ ペット"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="customerPhone">
+      電話番号
+      <span class="required-label">必須</span>
+    </label>
+
+    <input
+      type="tel"
+      id="customerPhone"
+      class="form-input"
+      maxlength="20"
+      autocomplete="tel"
+      inputmode="tel"
+      placeholder="例：09012345678"
+    >
+  </div>
+
+  <p
+    id="customerInputError"
+    class="error-message"
+    hidden
+  ></p>
+
+  <button
+    type="button"
+    class="button"
+    onclick="proceedToConfirmation()"
+  >
+    入力内容を確認する
+  </button>
+</section>
+    
     <!-- 確認画面 -->
     <section id="confirmScreen" class="screen">
       <h1 class="title">予約内容の確認</h1>
