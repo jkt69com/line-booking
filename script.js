@@ -9,6 +9,8 @@ const booking = {
   menu: '',
   date: '',
   time: '',
+  name: '',
+  phone: '',
   idToken: ''
 };
 
