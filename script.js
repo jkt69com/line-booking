@@ -248,15 +248,30 @@ function selectMenu(menuName) {
   booking.menu = menuName;
   booking.date = '';
   booking.time = '';
+  booking.name = '';
+  booking.phone = '';
 
   document
     .getElementById('selectedMenu')
     .textContent = menuName;
 
+  const customerName =
+    document.getElementById('customerName');
+
+  const customerPhone =
+    document.getElementById('customerPhone');
+
+  if (customerName) {
+    customerName.value = '';
+  }
+
+  if (customerPhone) {
+    customerPhone.value = '';
+  }
+
   createDateButtons();
   showScreen('dateScreen');
 }
-
 
 /**
  * 今日から14日分の日付ボタンを作る
