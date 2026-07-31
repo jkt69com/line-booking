@@ -604,6 +604,21 @@ async function submitBooking() {
   const submitButton =
     document.getElementById('submitButton');
 
+if (
+  !booking.menu ||
+  !booking.date ||
+  !booking.time ||
+  !booking.name ||
+  !booking.phone
+) {
+  alert(
+    '予約内容またはお客様情報が不足しています。'
+  );
+
+  showScreen('customerScreen');
+  return;
+}
+  
   const currentIdToken =
     liff.getIDToken();
 
@@ -623,15 +638,17 @@ async function submitBooking() {
     '予約処理中…';
 
   try {
-    const result =
-      await callGasApi({
-        action: 'createBooking',
-        menu: booking.menu,
-        date: booking.date,
-        time: booking.time,
-        idToken: booking.idToken
-      });
-
+const result =
+  await callGasApi({
+    action: 'createBooking',
+    menu: booking.menu,
+    date: booking.date,
+    time: booking.time,
+    name: booking.name,
+    phone: booking.phone,
+    idToken: booking.idToken
+  });
+    
     handleBookingResult(result);
 
   } catch (error) {
@@ -686,20 +703,28 @@ async function handleBookingResult(result) {
     return;
   }
 
-  document
-    .getElementById('completeMenu')
-    .textContent = booking.menu;
+document
+  .getElementById('completeMenu')
+  .textContent = booking.menu;
 
-  document
-    .getElementById('completeDate')
-    .textContent =
-      formatDate(booking.date);
+document
+  .getElementById('completeDate')
+  .textContent =
+    formatDate(booking.date);
 
-  document
-    .getElementById('completeTime')
-    .textContent = booking.time;
+document
+  .getElementById('completeTime')
+  .textContent = booking.time;
 
-  showScreen('completeScreen');
+document
+  .getElementById('completeName')
+  .textContent = booking.name;
+
+document
+  .getElementById('completePhone')
+  .textContent = booking.phone;
+
+showScreen('completeScreen');
 }
 
 
@@ -733,7 +758,25 @@ function resetBooking() {
   booking.menu = '';
   booking.date = '';
   booking.time = '';
+  booking.name = '';
+  booking.phone = '';
 
+const customerName =
+  document.getElementById('customerName');
+
+if (customerName) {
+  customerName.value = '';
+}
+
+const customerPhone =
+  document.getElementById('customerPhone');
+
+if (customerPhone) {
+  customerPhone.value = '';
+}
+
+hideCustomerInputError();
+  
   const submitButton =
     document.getElementById('submitButton');
 
@@ -770,4 +813,40 @@ function isValidPhoneNumber(phone) {
   return /^[0-9+\-()]{8,20}$/.test(
     normalizedPhone
   );
+}
+
+/**
+ * お客様情報の入力エラーを表示する
+ */
+function showCustomerInputError(message) {
+  const errorArea =
+    document.getElementById(
+      'customerInputError'
+    );
+
+  if (!errorArea) {
+    alert(message);
+    return;
+  }
+
+  errorArea.textContent = message;
+  errorArea.hidden = false;
+}
+
+
+/**
+ * お客様情報の入力エラーを消す
+ */
+function hideCustomerInputError() {
+  const errorArea =
+    document.getElementById(
+      'customerInputError'
+    );
+
+  if (!errorArea) {
+    return;
+  }
+
+  errorArea.textContent = '';
+  errorArea.hidden = true;
 }
