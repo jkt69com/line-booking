@@ -759,3 +759,15 @@ function resetBooking() {
 
   showScreen('homeScreen');
 }
+
+/**
+ * 電話番号の形式を確認する
+ */
+function isValidPhoneNumber(phone) {
+  const normalizedPhone =
+    phone.replace(/[\sー－−]/g, '-');
+
+  return /^[0-9+\-()]{8,20}$/.test(
+    normalizedPhone
+  );
+}
