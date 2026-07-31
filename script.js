@@ -499,6 +499,87 @@ function selectTime(time) {
 }
 
 /**
+ * お客様情報を確認して予約確認画面へ進む
+ */
+function proceedToConfirmation() {
+  const customerName =
+    document.getElementById('customerName');
+
+  const customerPhone =
+    document.getElementById('customerPhone');
+
+  const name =
+    customerName.value.trim();
+
+  const phone =
+    customerPhone.value.trim();
+
+  hideCustomerInputError();
+
+  if (!name) {
+    showCustomerInputError(
+      'お名前を入力してください。'
+    );
+
+    customerName.focus();
+    return;
+  }
+
+  if (name.length > 50) {
+    showCustomerInputError(
+      'お名前は50文字以内で入力してください。'
+    );
+
+    customerName.focus();
+    return;
+  }
+
+  if (!phone) {
+    showCustomerInputError(
+      '電話番号を入力してください。'
+    );
+
+    customerPhone.focus();
+    return;
+  }
+
+  if (!isValidPhoneNumber(phone)) {
+    showCustomerInputError(
+      '電話番号を正しく入力してください。'
+    );
+
+    customerPhone.focus();
+    return;
+  }
+
+  booking.name = name;
+  booking.phone = phone;
+
+  document
+    .getElementById('confirmMenu')
+    .textContent = booking.menu;
+
+  document
+    .getElementById('confirmDate')
+    .textContent =
+      formatDate(booking.date);
+
+  document
+    .getElementById('confirmTime')
+    .textContent = booking.time;
+
+  document
+    .getElementById('confirmName')
+    .textContent = booking.name;
+
+  document
+    .getElementById('confirmPhone')
+    .textContent = booking.phone;
+
+  showScreen('confirmScreen');
+}
+
+/**
  * 2026-07-25を2026年7月25日に変換する
  */
 function formatDate(dateValue) {
