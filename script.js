@@ -462,27 +462,41 @@ function handleTimeLoadingError(error) {
 
 
 /**
- * 時間を選択して確認画面へ進む
+ * 時間を選択してお客様情報入力画面へ進む
  */
 function selectTime(time) {
   booking.time = time;
 
   document
-    .getElementById('confirmMenu')
+    .getElementById('customerMenu')
     .textContent = booking.menu;
 
   document
-    .getElementById('confirmDate')
+    .getElementById('customerDate')
     .textContent =
       formatDate(booking.date);
 
   document
-    .getElementById('confirmTime')
+    .getElementById('customerTime')
     .textContent = booking.time;
 
-  showScreen('confirmScreen');
-}
+  const customerName =
+    document.getElementById('customerName');
 
+  const customerPhone =
+    document.getElementById('customerPhone');
+
+  if (customerName) {
+    customerName.value = booking.name;
+  }
+
+  if (customerPhone) {
+    customerPhone.value = booking.phone;
+  }
+
+  hideCustomerInputError();
+  showScreen('customerScreen');
+}
 
 /**
  * 2026-07-25を2026年7月25日に変換する
