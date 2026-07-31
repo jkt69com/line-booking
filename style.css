@@ -224,3 +224,16 @@ button {
   border-radius: 8px;
   background-color: #f5f5f5;
 }
+
+.top-image-area {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 20px;
+}
+
+.top-image {
+  display: block;
+  width: min(72vw, 260px);
+  height: auto;
+  border-radius: 12px;
+}
