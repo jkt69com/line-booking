@@ -226,14 +226,22 @@ button {
 }
 
 .top-image-area {
+  width: 100%;
   display: flex;
   justify-content: center;
-  margin: 8px 0 20px;
+  align-items: center;
+  margin: 16px 0 24px;
 }
 
 .top-image {
-  display: block;
-  width: min(72vw, 260px);
+  width: 220px;
+  max-width: 80%;
   height: auto;
-  border-radius: 12px;
+
+  display: block;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
